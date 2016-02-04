@@ -225,7 +225,9 @@ public class GameManager : MonoBehaviour {
 
 		person.Configure(hairs[sHair], pants[sPant], skins[sSkin] );
 
-		instanciaPerson.transform.position = pos;
+        instanciaPerson.transform.parent = gameContainer.transform;
+
+        instanciaPerson.transform.position = pos;
 		return person;
 
 	}
