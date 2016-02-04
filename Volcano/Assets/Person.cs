@@ -12,7 +12,7 @@ public class Person : MonoBehaviour {
 
 	private SoundManager sounManager;
 
-	bool pinchado = false;
+	public bool picked = false;
 	float x,y;
 	// Use this for initialization
 	void Start () {
@@ -51,8 +51,12 @@ public class Person : MonoBehaviour {
         {
 			return;
 		}
+        if( picked )
+        {
+            return;
+        }
 
-		pinchado = true;
+		picked = true;
 		if (QuestionController.instance.IsValid (this)) {
 			sounManager.playHappyPeople();
 			StartCoroutine( moverSprite(true) );

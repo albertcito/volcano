@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour {
     public GameObject gameContainer;
 	public GameObject personPrefab;
 	public GameObject volcan;
-	public List<Person> persons  =  new List<Person>();
+	public List<Person> people  =  new List<Person>();
 	private int remainingGoodAnswers;
 	public int lives = 3;
 	private int currentLives;
@@ -164,7 +164,7 @@ public class GameManager : MonoBehaviour {
             StartCoroutine( newPerson.WalkToPositionCoroutine( personPos ) );
 			remainingPos.RemoveAt (r);
 
-			persons.Add (newPerson);
+			people.Add (newPerson);
 			if (QuestionController.instance.IsValid (newPerson)) {
 				remainingGoodAnswers++;
 			}
@@ -178,7 +178,7 @@ public class GameManager : MonoBehaviour {
             StartCoroutine(newPerson.WalkToPositionCoroutine(personPos));
             remainingPos.RemoveAt (r);
 
-			persons.Add (newPerson);
+			people.Add (newPerson);
 			if (QuestionController.instance.IsValid (newPerson)) {
 				remainingGoodAnswers++;
 				print ("ERROR ... check");
@@ -189,7 +189,7 @@ public class GameManager : MonoBehaviour {
         while ( true )
         {
             bool peopleIsWalking = false;
-            foreach( Person p in persons )
+            foreach( Person p in people )
             {
                 if (p.isWalking )
                 {
@@ -285,6 +285,13 @@ public class GameManager : MonoBehaviour {
         if( remainingGoodAnswers == 1 )
         {
             isInTransition = true;
+            foreach( Person p in people )
+            {
+                if (!p.picked)
+                {
+                    StartCoroutine(p.WalkToPositionCoroutine(GetClosestOriginPoint(p.transform.position)));
+                }
+            }
         }
     }
 
@@ -335,13 +342,13 @@ public class GameManager : MonoBehaviour {
 
 	private void destroyGame(){
 
-		foreach (Person person in persons) {
+		foreach (Person person in people) {
 
 			if (person != null) {
 				Destroy (person.gameObject);
 			}
 		}
-		persons.Clear ();
+		people.Clear ();
 
 	}
 
