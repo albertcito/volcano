@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager instance;
 
+    public GameObject gameContainer;
 	public GameObject personPrefab;
 	public GameObject volcan;
 	public List<Person> persons  =  new List<Person>();
@@ -264,6 +265,7 @@ public class GameManager : MonoBehaviour {
 				loadGame();
 			}
 		} else {
+            StartCoroutine( ShakeCoroutine() );
 			soundManager.playVolcanoAngry();
 			volcanoEyeManager.setAngryEyeFlagTrue();
 			currentLives--;
@@ -282,6 +284,18 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+    private IEnumerator ShakeCoroutine()
+    {
+        Vector3 originalPos = gameContainer.transform.localPosition;
+        float sign = 1f;
+        for (int i = 0; i < 5; i++) {
+            gameContainer.transform.localPosition = originalPos + sign * 0.15f * Vector3.right;
+            sign *= -1f;
+            yield return 0;
+            yield return 0;
+        }
+        gameContainer.transform.localPosition = originalPos;
+    }
 
 	private void destroyGame(){
 
