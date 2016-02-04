@@ -284,7 +284,8 @@ public class GameManager : MonoBehaviour {
 
     public void CheckIfLastPerson()
     {
-        if( remainingGoodAnswers == 1 )
+        remainingGoodAnswers--;
+        if (remainingGoodAnswers <= 0)
         {
             isInTransition = true;
             foreach( Person p in people )
@@ -301,7 +302,6 @@ public class GameManager : MonoBehaviour {
     public void OnAnswer( bool isGoodAnswer ){
 		if (isGoodAnswer) {
 			volcanoEyeManager.sethappyEyeFlagTrue();
-			remainingGoodAnswers--;
 			if (remainingGoodAnswers <= 0) {
 				destroyGame();
 				level++;
