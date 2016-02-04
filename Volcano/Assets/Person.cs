@@ -50,21 +50,17 @@ public class Person : MonoBehaviour {
 	}
 	void OnMouseDown() {
 
-		if(GameManager.instance.gameFinished){
+		if(GameManager.instance.IsInputBlocked)
+        {
 			return;
-		}
-		if(GameManager.instance.gameStarted){
-			return;
-		}
-		if (pinchado) {
-			return;	
 		}
 
 		pinchado = true;
 		if (QuestionController.instance.IsValid (this)) {
 			sounManager.playHappyPeople();
 			StartCoroutine( moverSprite(true) );
-			print ("valido");
+            GameManager.instance.CheckIfLastPerson();    //to block input
+            print ("valido");
 
 		} else {
 			sounManager.playPeopleGrount();

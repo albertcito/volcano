@@ -27,10 +27,10 @@ public class GameManager : MonoBehaviour {
 
 	private int level;
 	public bool gameFinished;
-	public bool gameStarted;
+    public bool isInTransition = true;
 
-	//numero de personas que aparecen 
-	int[] minFollowers={3,4,5,5,6,8,12,5,5,6,11,10,5,5,8,8,10,12,10};
+    //numero de personas que aparecen 
+    int[] minFollowers={3,4,5,5,6,8,12,5,5,6,11,10,5,5,8,8,10,12,10};
 	int[] maxFollowers = { 5, 8, 10, 9, 11, 10, 15, 6, 6, 14, 18, 16, 7, 7, 12, 12, 20, 20, 20 };
 	//numero de condiciones
 	int[] minCondition={1,1,1,2,2,1,2,1,1,1,1,2,3,3,2,2,2,2,3};						
@@ -41,6 +41,19 @@ public class GameManager : MonoBehaviour {
 	//Numero de preguntas negativas
 	int[] minNegation={0,0,0,0,0,0,0,1,1,0,0,1,0,1,0,1,0,1,1};
 	int[] maxNegation = { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2 };
+
+    public bool IsInputBlocked {
+        get {
+            if (gameFinished)
+            {
+                return true;
+            }
+            if (isInTransition)
+            {
+                return true;
+            }
+            return false;
+        } }
 
 	IEnumerator Start(){
 		soundManager=SoundManager._instance;
@@ -54,7 +67,6 @@ public class GameManager : MonoBehaviour {
 
 		while( true ){
 			if (Input.GetMouseButtonDown (0)) {
-				print("preiosno");
 				break;
 			}
 			yield return 0;
@@ -108,7 +120,8 @@ public class GameManager : MonoBehaviour {
 		
 	void loadGame(){
 
-		int numConditions = GetConditions ();
+        print("====== loadGame =======");
+        int numConditions = GetConditions ();
 		int numNegations = Mathf.RoundToInt ( numConditions * GetNegationPercentage() );
 		print ("num negations for level " + level + ": "  + numNegations );
 		QuestionController.instance.defineConditions ( numConditions, numNegations );
@@ -119,7 +132,9 @@ public class GameManager : MonoBehaviour {
 
 		AparecerMonoCoroutine(valid,total-valid);
 
-	}
+        isInTransition = false;
+
+    }
 
 	void AparecerMonoCoroutine(int valido, int invalido){
 
@@ -225,21 +240,19 @@ public class GameManager : MonoBehaviour {
 		int r = UnityEngine.Random.Range (0, availableInvalidSets.Count - 1);
 		SetInvalid selectedSet = availableInvalidSets [r];
 
-		if (selectedSet.selectedHairs == QuestionController.instance.invalidHairs) {
-			print ("invalid hairs");
-		}
-		if (selectedSet.selectedPants == QuestionController.instance.invalidPants) {
-			print ("invalid pants");
-		}
-		if (selectedSet.selectedSkins == QuestionController.instance.invalidSkins) {
-			print ("invalid skins");
-		}
-
 		return apereceMono( selectedSet.selectedHairs, selectedSet.selectedPants, selectedSet.selectedSkins, pos );
 	}
 
+    public void CheckIfLastPerson()
+    {
+        if( remainingGoodAnswers == 1 )
+        {
+            isInTransition = true;
+        }
+    }
 
-	public void OnAnswer( bool isGoodAnswer ){
+
+    public void OnAnswer( bool isGoodAnswer ){
 		if (isGoodAnswer) {
 			volcanoEyeManager.sethappyEyeFlagTrue();
 			remainingGoodAnswers--;
