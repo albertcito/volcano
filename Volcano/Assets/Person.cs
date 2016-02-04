@@ -7,7 +7,8 @@ public class Person : MonoBehaviour {
 	public Condition.Hair hair;
 	public Condition.Pant pant;
 	public Condition.Skin skin;
-	public GameObject question; 
+	public GameObject question;
+    public bool isWalking;
 
 	private SoundManager sounManager;
 
@@ -43,11 +44,7 @@ public class Person : MonoBehaviour {
 		skinGameObject.transform.localPosition = new Vector3 (-0.05f, 0, 0);
 
 	}
-	
-	// Update is called once per frame
-	void Update () {
 
-	}
 	void OnMouseDown() {
 
 		if(GameManager.instance.IsInputBlocked)
@@ -68,6 +65,27 @@ public class Person : MonoBehaviour {
 		}
 
 	}
+
+    public IEnumerator WalkToPositionCoroutine( Vector3 destination )
+    {
+        isWalking = true;
+        Vector3 direction = (destination - transform.position).normalized;
+        
+        while ( transform.position != destination )
+        {
+            float deltaPos = 20f * Time.deltaTime;
+            if (Vector3.Distance(transform.position, destination) > deltaPos)
+            {
+                transform.position += deltaPos * direction;
+            }
+            else
+            {
+                transform.position = destination;
+            }
+            yield return null;
+        }
+        isWalking = false;
+    }
 
 
 	IEnumerator moverSprite( bool isOK ){

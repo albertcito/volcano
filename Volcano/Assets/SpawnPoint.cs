@@ -3,8 +3,8 @@ using System.Collections;
 
 public class SpawnPoint : MonoBehaviour {
 
-    private const float WIDTH = 0.85f;
-    private const float HEIGHT = 1.64f;
+    public const float WIDTH = 0.85f;
+    public const float HEIGHT = 1.64f;
 
     void OnDrawGizmos(){
         Vector3 corner1 = transform.position + new Vector3( 0.5f * WIDTH, 0.5f * HEIGHT, 0 );

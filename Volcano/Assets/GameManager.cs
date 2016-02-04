@@ -20,8 +20,11 @@ public class GameManager : MonoBehaviour {
 	public int lives = 3;
 	private int currentLives;
 	public GameObject spawnPointsParent;
-	List<Transform> spawnPoints = new List<Transform>();
-	float lavaHeight = 1f;
+    List<Transform> spawnPoints = new List<Transform>();
+
+    public GameObject personOriginPointsParent;
+    List<Transform> originPoints = new List<Transform>();
+    float lavaHeight = 1f;
 
 	public GameObject beginText;
 	public GameObject endText;
@@ -77,7 +80,11 @@ public class GameManager : MonoBehaviour {
 		for( int i = 0; i < spawnPointsParent.transform.childCount; i++){
 			spawnPoints.Add( spawnPointsParent.transform.GetChild(i));
 		}
-		currentLives = lives;
+        for (int i = 0; i < personOriginPointsParent.transform.childCount; i++)
+        {
+            originPoints.Add(personOriginPointsParent.transform.GetChild(i));
+        }
+        currentLives = lives;
 		personPrefab = Resources.Load ("PersonPrefab") as GameObject;
 		loadGame();
 
@@ -118,10 +125,17 @@ public class GameManager : MonoBehaviour {
 		print ("negation percentage for level "+level+ ": " + retVal);
 		return retVal;
 	}
-		
-	void loadGame(){
+	
+    void loadGame()
+    {
+        StartCoroutine(loadGameCoroutine());
+    }
+
+
+    IEnumerator loadGameCoroutine(){
 
         print("====== loadGame =======");
+        isInTransition = true;
         int numConditions = GetConditions ();
 		int numNegations = Mathf.RoundToInt ( numConditions * GetNegationPercentage() );
 		print ("num negations for level " + level + ": "  + numNegations );
@@ -131,22 +145,23 @@ public class GameManager : MonoBehaviour {
 		int valid = Mathf.RoundToInt(GetValidPercentage() * total );
 		print ( "total valid for level " + level + ": " + valid );
 
-		AparecerMonoCoroutine(valid,total-valid);
+		yield return StartCoroutine( AparecerMonoCoroutine(valid,total-valid) );
 
         isInTransition = false;
 
     }
 
-	void AparecerMonoCoroutine(int valido, int invalido){
+	IEnumerator AparecerMonoCoroutine(int valido, int invalido){
 
 		List<Transform> remainingPos = new List<Transform> (spawnPoints);
 
 		remainingGoodAnswers = 0;
-		for(int i = 0; i <valido; i++){
-			int r = UnityEngine.Random.Range (0,remainingPos.Count-1);
-			Vector3 personPos=remainingPos[r].position;
-			personPos=new Vector3(personPos.x,personPos.y,personPos.z);
-			Person newPerson = monoValido(personPos);
+        for (int i = 0; i <valido; i++){
+			int r = UnityEngine.Random.Range (0,remainingPos.Count);
+			Vector3 personPos = remainingPos[r].position;
+            Vector3 personOriginPos = GetClosestOriginPoint(personPos );
+            Person newPerson = monoValido(personOriginPos );
+            StartCoroutine( newPerson.WalkToPositionCoroutine( personPos ) );
 			remainingPos.RemoveAt (r);
 
 			persons.Add (newPerson);
@@ -156,9 +171,12 @@ public class GameManager : MonoBehaviour {
 		}
 
 		for(int i = 0; i <invalido; i++){
-			int r = UnityEngine.Random.Range (0,remainingPos.Count-1);
-			Person newPerson = monoInvalido (remainingPos [r].position);
-			remainingPos.RemoveAt (r);
+			int r = UnityEngine.Random.Range (0,remainingPos.Count);
+            Vector3 personPos = remainingPos[r].position;
+            Vector3 personOriginPos = GetClosestOriginPoint(personPos);
+            Person newPerson = monoInvalido (personOriginPos );
+            StartCoroutine(newPerson.WalkToPositionCoroutine(personPos));
+            remainingPos.RemoveAt (r);
 
 			persons.Add (newPerson);
 			if (QuestionController.instance.IsValid (newPerson)) {
@@ -167,6 +185,24 @@ public class GameManager : MonoBehaviour {
 			}
 
 		}
+
+        while ( true )
+        {
+            bool peopleIsWalking = false;
+            foreach( Person p in persons )
+            {
+                if (p.isWalking )
+                {
+                    peopleIsWalking = true;
+                    break;
+                }
+            }
+            if( !peopleIsWalking)
+            {
+                break;
+            }
+            yield return null;
+        }
 		if (remainingGoodAnswers != valido) {
 			print ("ERROR 2... check");
 		}
@@ -319,5 +355,17 @@ public class GameManager : MonoBehaviour {
 			yield return 0;
 		}
 	}
+
+    Vector3 GetClosestOriginPoint( Vector3 pos )
+    {
+        Vector3 retVal = originPoints[0].position;
+        foreach ( Transform o in originPoints )
+        {
+            if( Vector3.Distance( pos, o.position ) < Vector3.Distance(pos, retVal) ) {
+                retVal = o.position;
+            }
+        }
+        return retVal;
+    }
 
 }
