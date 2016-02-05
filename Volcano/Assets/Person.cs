@@ -7,11 +7,12 @@ public class Person : MonoBehaviour {
 	public Condition.Hair hair;
 	public Condition.Pant pant;
 	public Condition.Skin skin;
-	public GameObject question;
     public bool isWalking;
-
+    public GameObject container;
 	private SoundManager sounManager;
 	private float walkVelocity=Random.Range(8f,14f);
+    private Animator containerAnimator;
+
 
 	public bool picked = false;
 	float x,y;
@@ -20,8 +21,7 @@ public class Person : MonoBehaviour {
 		sounManager=SoundManager._instance;
 		x = GameObject.FindGameObjectWithTag ("volcan").transform.position.x-2.3f;
 		y = GameObject.FindGameObjectWithTag ("volcan").transform.position.y + 6.2f;
-
-	}
+    }
 	/*
 	 * Viste a la persona 
 	 */
@@ -33,15 +33,15 @@ public class Person : MonoBehaviour {
 
 
 		GameObject hairGameObject = Instantiate(Resources.Load ("Hairs/" + hair.ToString () + "Prefab") ) as GameObject;
-		hairGameObject.transform.parent = this.transform;
+		hairGameObject.transform.parent = container.transform;
 		hairGameObject.transform.localPosition = new Vector3 (-0.05f, 0.68f, 0);
 
 		GameObject pantGameObject = Instantiate(Resources.Load ("Pants/" + pant.ToString () + "Prefab") ) as GameObject;
-		pantGameObject.transform.parent = this.transform;
+		pantGameObject.transform.parent = container.transform;
 		pantGameObject.transform.localPosition = new Vector3 (-0.05f, -0.15f, 0);
 
 		GameObject skinGameObject = Instantiate(Resources.Load ("Skins/" + skin.ToString () + "Prefab") ) as GameObject;
-		skinGameObject.transform.parent = this.transform;
+		skinGameObject.transform.parent = container.transform;
 		skinGameObject.transform.localPosition = new Vector3 (-0.05f, 0, 0);
 
 	}
@@ -75,7 +75,12 @@ public class Person : MonoBehaviour {
     {
         isWalking = true;
         Vector3 direction = (destination - transform.position).normalized;
-        
+
+        if(containerAnimator == null)
+        {
+            containerAnimator = container.GetComponent<Animator>();
+        }
+        containerAnimator.SetBool("isWalking", true );
         while ( transform.position != destination )
         {
 			float deltaPos = walkVelocity * Time.deltaTime;
@@ -90,6 +95,7 @@ public class Person : MonoBehaviour {
             yield return null;
         }
         isWalking = false;
+        containerAnimator.SetBool("isWalking", false);
     }
 
 
