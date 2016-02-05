@@ -11,6 +11,7 @@ public class Person : MonoBehaviour {
     public bool isWalking;
 
 	private SoundManager sounManager;
+	private float walkVelocity=Random.Range(8f,14f);
 
 	public bool picked = false;
 	float x,y;
@@ -77,7 +78,7 @@ public class Person : MonoBehaviour {
         
         while ( transform.position != destination )
         {
-            float deltaPos = 20f * Time.deltaTime;
+			float deltaPos = walkVelocity * Time.deltaTime;
             if (Vector3.Distance(transform.position, destination) > deltaPos)
             {
                 transform.position += deltaPos * direction;

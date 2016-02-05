@@ -46,6 +46,20 @@ public class GameManager : MonoBehaviour {
 	int[] minNegation={0,0,0,0,0,0,0,1,1,0,0,1,0,1,0,1,0,1,1};
 	int[] maxNegation = { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2 };
 
+
+	//La idea de esto es dar un porcentage de monos con caracteristicas similares a la receta esto define 
+	//como un numeor entre los dos valores minimos y maximos
+	//En caso de una categoria positiva 
+	//En caso de una cagegoria negativa suar el procentage para poner la categoria especifica en los aldeanos 
+	//En caso de 2 categorias
+		//2 positivas incluir al alsar aldeanos con una de las dos categorias segun el procentage
+		//1 positivas 1 negativa incluir al alsar aldeanos con la categoria positiva y tambien 
+			//la categoria negativa puede ser las dos o solo una
+	//En caso 3 categorias seguir mas menos la misma logica que cuando hay dos categorias agregando la tercera
+	//La idea general de esto es confundir mas al jugador entregando respuestas casi correctas para las recetas
+	float[] minUnvalidMisleadingPercentage= { 20, 25, 20, 20, 20, 25, 40, 30, 25, 45, 50, 55, 60, 60, 50, 60, 50, 60, 60};
+	float[] maxUnvalidMisleadingPercentage= { 30, 35, 40, 50, 50, 50, 60, 40, 40, 50, 60, 60, 60, 65, 65, 65, 70, 70, 70 };
+
     public bool IsInputBlocked {
         get {
             if (gameFinished)
