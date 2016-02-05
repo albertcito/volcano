@@ -10,7 +10,6 @@ public class Person : MonoBehaviour {
     public bool isWalking;
     public GameObject container;
 	private SoundManager sounManager;
-	private float walkVelocity=Random.Range(8f,14f);
     private Animator containerAnimator;
 
 
@@ -71,7 +70,7 @@ public class Person : MonoBehaviour {
 
 	}
 
-    public IEnumerator WalkToPositionCoroutine( Vector3 destination )
+    public IEnumerator WalkToPositionCoroutine( Vector3 destination, bool dieAfter = false )
     {
         isWalking = true;
         Vector3 direction = (destination - transform.position).normalized;
@@ -81,6 +80,8 @@ public class Person : MonoBehaviour {
             containerAnimator = container.GetComponent<Animator>();
         }
         containerAnimator.SetBool("isWalking", true );
+
+        float walkVelocity = Random.Range(8f, 14f);
         while ( transform.position != destination )
         {
 			float deltaPos = walkVelocity * Time.deltaTime;
@@ -96,6 +97,10 @@ public class Person : MonoBehaviour {
         }
         isWalking = false;
         containerAnimator.SetBool("isWalking", false);
+        if(dieAfter)
+        {
+            Destroy( this.gameObject );
+        }
     }
 
 

@@ -302,11 +302,13 @@ public class GameManager : MonoBehaviour {
         if (remainingGoodAnswers <= 0)
         {
             isInTransition = true;
-            foreach( Person p in people )
+            for(int i = people.Count - 1; i >= 0; i-- )
             {
+                Person p = people[i];
                 if (!p.picked)
                 {
-                    StartCoroutine(p.WalkToPositionCoroutine(GetClosestOriginPoint(p.transform.position)));
+                    StartCoroutine(p.WalkToPositionCoroutine(GetClosestOriginPoint( p.transform.position ), true) );
+                    people.Remove(p);
                 }
             }
         }
