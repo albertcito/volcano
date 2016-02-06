@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using DG.Tweening;
 
 
 public class Person : MonoBehaviour {
@@ -57,15 +58,16 @@ public class Person : MonoBehaviour {
         }
 
 		picked = true;
+        GameManager.instance.people.Remove(this);
 		if (QuestionController.instance.IsValid (this)) {
 			sounManager.playHappyPeople();
-			StartCoroutine( moverSprite(true) );
+			StartCoroutine( DeathCoroutine(true) );
             GameManager.instance.CheckIfLastPerson();    //to block input
             print ("valido");
 
 		} else {
 			sounManager.playPeopleGrount();
-			StartCoroutine( moverSprite(false) );
+			StartCoroutine( DeathCoroutine(false) );
 		}
 
 	}
@@ -104,22 +106,33 @@ public class Person : MonoBehaviour {
     }
 
 
-	IEnumerator moverSprite( bool isOK ){
+	IEnumerator DeathCoroutine( bool isOK ){
 		
-		this.transform.position = new Vector3 (x, y,-1);
+		
+       
 
+        yield return StartCoroutine(WalkToPositionCoroutine(GameManager.instance.GetClosestJumpPoint(transform.position)));
+        float duration = 0.3f;
+        float height = 1.5f;
+        Vector3 finalPos = GameManager.instance.deathPoint.position;
+        Vector3 middlePoint = finalPos + transform.position;
+        middlePoint.y = transform.position.y + height;
+        Tweener t1 = transform.DOMoveX(finalPos.x, duration).SetEase(Ease.Linear);
+        Sequence seq = DOTween.Sequence();
+        TweenCallback changeLayer = () =>
+        {
+            SpriteRenderer[] sprites = GetComponentsInChildren<SpriteRenderer>();
+            foreach( SpriteRenderer sprite in sprites)
+            {
+                sprite.sortingOrder -= 10;
+            }
+        };
+        seq.Append(transform.DOMoveY(middlePoint.y, duration * 0.5f).SetEase(Ease.OutQuad).OnComplete<Tweener>(changeLayer));
+        seq.Append(transform.DOMoveY(finalPos.y, duration * 0.5f).SetEase(Ease.OutQuad));
+        yield return t1.WaitForCompletion();
+        yield return seq.WaitForCompletion();
 
-		float h = this.transform.localScale.y*0.2f;
-
-
-		for(int i = 0; i <10; i++){
-			yield return new WaitForSeconds (0.1f);
-			y = y - h;
-			this.transform.position = new Vector3 (x, y,-2);
-
-		}
-	
-		GameManager.instance.OnAnswer (isOK);
+        GameManager.instance.OnAnswer (isOK);
 		Destroy (this.gameObject);
 	}
 

@@ -21,6 +21,9 @@ public class GameManager : MonoBehaviour {
 	private int currentLives;
 	public GameObject spawnPointsParent;
     List<Transform> spawnPoints = new List<Transform>();
+    public GameObject jumpPointsParent;
+    List<Transform> jumpPoints = new List<Transform>();
+    public Transform deathPoint;
 
     public GameObject personOriginPointsParent;
     List<Transform> originPoints = new List<Transform>();
@@ -97,6 +100,10 @@ public class GameManager : MonoBehaviour {
         for (int i = 0; i < personOriginPointsParent.transform.childCount; i++)
         {
             originPoints.Add(personOriginPointsParent.transform.GetChild(i));
+        }
+        for (int i = 0; i < jumpPointsParent.transform.childCount; i++)
+        {
+            jumpPoints.Add(jumpPointsParent.transform.GetChild(i));
         }
         currentLives = lives;
 		personPrefab = Resources.Load ("PersonPrefab") as GameObject;
@@ -387,6 +394,19 @@ public class GameManager : MonoBehaviour {
         foreach ( Transform o in originPoints )
         {
             if( Vector3.Distance( pos, o.position ) < Vector3.Distance(pos, retVal) ) {
+                retVal = o.position;
+            }
+        }
+        return retVal;
+    }
+
+    public Vector3 GetClosestJumpPoint(Vector3 pos)
+    {
+        Vector3 retVal = jumpPoints[0].position;
+        foreach (Transform o in jumpPoints)
+        {
+            if (Vector3.Distance(pos, o.position) < Vector3.Distance(pos, retVal))
+            {
                 retVal = o.position;
             }
         }
