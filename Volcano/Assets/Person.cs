@@ -107,12 +107,9 @@ public class Person : MonoBehaviour {
 
 
 	IEnumerator DeathCoroutine( bool isOK ){
-		
-		
-       
 
         yield return StartCoroutine(WalkToPositionCoroutine(GameManager.instance.GetClosestJumpPoint(transform.position)));
-        float duration = 0.3f;
+        float duration = 0.4f;
         float height = 1.5f;
         Vector3 finalPos = GameManager.instance.deathPoint.position;
         Vector3 middlePoint = finalPos + transform.position;
@@ -127,8 +124,8 @@ public class Person : MonoBehaviour {
                 sprite.sortingOrder -= 10;
             }
         };
-        seq.Append(transform.DOMoveY(middlePoint.y, duration * 0.5f).SetEase(Ease.OutQuad).OnComplete<Tweener>(changeLayer));
-        seq.Append(transform.DOMoveY(finalPos.y, duration * 0.5f).SetEase(Ease.OutQuad));
+        seq.Append(transform.DOMoveY(middlePoint.y, duration * 0.5f).SetEase(Ease.OutCubic).OnComplete<Tweener>(changeLayer));
+        seq.Append(transform.DOMoveY(finalPos.y, duration * 0.5f).SetEase(Ease.InQuad));
         yield return t1.WaitForCompletion();
         yield return seq.WaitForCompletion();
 
