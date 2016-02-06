@@ -347,7 +347,7 @@ public class QuestionController : MonoBehaviour {
 				GameObject icon = cond.CreateDisplay ();
 				icons.Add (icon);
 				icon.transform.parent = this.transform;
-				icon.transform.localPosition = (i- 1f) * 1f * (new Vector3 (1f, 0, 0));
+				icon.transform.localPosition = (i- 1f) * 2f * (new Vector3 (1f, 0, 0));
 			}
 
 		} else {
