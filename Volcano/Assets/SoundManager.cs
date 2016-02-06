@@ -40,6 +40,10 @@ public class SoundManager : MonoBehaviour {
 		audio[3].Play();
 	}
 
+	public void playVolcanoHappy(){
+		audio[4].Play();
+	}
+
 	public static SoundManager getSoundManager(){
 		return _instance;
 	}

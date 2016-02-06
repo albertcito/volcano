@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour {
 	public static UIManager _instance;
 
 	public GameObject levelText;
+	public GameObject timeText;
 
 	// Use this for initialization
 	void Awake () {
@@ -21,6 +22,10 @@ public class UIManager : MonoBehaviour {
 
 	public void setLevelText(int level){
 		levelText.GetComponent<Text>().text="Level "+level;
+	}
+
+	public void changeTime(int time){
+		timeText.GetComponent<Text>().text=""+time;
 	}
 
 	public static UIManager getInstance(){

@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject beginText;
 	public GameObject endText;
 
+	private float time=30;
 	private int level;
 	public bool gameFinished;
     public bool isInTransition = true;
@@ -64,6 +65,8 @@ public class GameManager : MonoBehaviour {
 	float[] minUnvalidMisleadingPercentage= { 20, 25, 20, 20, 20, 25, 40, 30, 25, 45, 50, 55, 60, 60, 50, 60, 50, 60, 60};
 	float[] maxUnvalidMisleadingPercentage= { 30, 35, 40, 50, 50, 50, 60, 40, 40, 50, 60, 60, 60, 65, 65, 65, 70, 70, 70 };
 
+
+
     public bool IsInputBlocked {
         get {
             if (gameFinished)
@@ -86,14 +89,21 @@ public class GameManager : MonoBehaviour {
 
 		endText.SetActive(false);
 
+
 		yield return new WaitForSeconds (0.5f);
 
 		while( true ){
 			if (Input.GetMouseButtonDown (0)) {
+				StartCoroutine(runTime());
 				break;
 			}
+
+
+
 			yield return 0;
 		}
+
+
 
 		instance = this;
 		for( int i = 0; i < spawnPointsParent.transform.childCount; i++){
@@ -152,8 +162,21 @@ public class GameManager : MonoBehaviour {
     void loadGame()
     {
         StartCoroutine(loadGameCoroutine());
+
     }
 
+	IEnumerator runTime(){
+		while(!gameFinished){
+			time-=1;
+			uiManager.changeTime((int)time);
+			if(time<=0){
+				time=30;
+				checkLooseState();
+			}
+			yield return new WaitForSeconds(1f);
+		}
+			
+	}
 
     IEnumerator loadGameCoroutine(){
 
@@ -229,6 +252,8 @@ public class GameManager : MonoBehaviour {
 		if (remainingGoodAnswers != valido) {
 			print ("ERROR 2... check");
 		}
+
+
 	}
 	/*
 	 * Va imprimieno monos en la pantalla
@@ -326,33 +351,40 @@ public class GameManager : MonoBehaviour {
 
     public void OnAnswer( bool isGoodAnswer ){
 		if (isGoodAnswer) {
+			soundManager.playVolcanoHappy();
 			volcanoEyeManager.sethappyEyeFlagTrue();
 			if (remainingGoodAnswers <= 0) {
 				destroyGame();
 				level++;
+				time+=3;
 				uiManager.setLevelText(level+1);
 				saveDataManager.setBestLevel(level);
 				loadGame();
 			}
 		} else {
-            StartCoroutine( ShakeCoroutine() );
-			soundManager.playVolcanoAngry();
-			volcanoEyeManager.setAngryEyeFlagTrue();
-			currentLives--;
-			Vector3 v = volcan.transform.position;
-
-			volcan.transform.localPosition += new Vector3 (0, lavaHeight / ((float)lives));
-
-
-			//subir lava
-			if (currentLives <= 0) {
-				gameFinished = true;
-				QuestionController.instance.killIcons ();
-				endText.SetActive(true);
-				StartCoroutine ( EndCoroutine());
-			}
+			checkLooseState();
 		}
 		particleManager.playBurnPersonParticles();
+	}
+
+	private void checkLooseState(){
+		StartCoroutine( ShakeCoroutine() );
+		soundManager.playVolcanoAngry();
+		time-=8;
+		volcanoEyeManager.setAngryEyeFlagTrue();
+		currentLives--;
+		Vector3 v = volcan.transform.position;
+
+		volcan.transform.localPosition += new Vector3 (0, lavaHeight / ((float)lives));
+
+
+		//subir lava
+		if (currentLives <= 0) {
+			gameFinished = true;
+			QuestionController.instance.killIcons ();
+			endText.SetActive(true);
+			StartCoroutine ( EndCoroutine());
+		}
 	}
 
     private IEnumerator ShakeCoroutine()

@@ -194,7 +194,7 @@ public class SkinCondition : Condition{
 
 	protected override GameObject CreateIcon(){
 		GameObject icon = GameObject.Instantiate (Resources.Load ("Skins/" + skin.ToString () + "Prefab")) as GameObject;
-		icon.transform.localScale = new Vector3 (0.6f, 0.6f, 0.6f);
+		icon.transform.localScale = new Vector3 (0.55f, 0.55f, 0.55f);
 		return icon;
 	}
 
@@ -323,7 +323,6 @@ public class QuestionController : MonoBehaviour {
 	void ShowConditions(){
 
 		beingText.SetActive(false);
-
 		if (conditions.Count == 1) {
 			for (int i = 0; i < conditions.Count; i++) {
 				Condition cond = conditions [i];
@@ -348,7 +347,7 @@ public class QuestionController : MonoBehaviour {
 				GameObject icon = cond.CreateDisplay ();
 				icons.Add (icon);
 				icon.transform.parent = this.transform;
-				icon.transform.localPosition = (i- 1f) * 2f * (new Vector3 (1f, 0, 0));
+				icon.transform.localPosition = (i- 1f) * 1f * (new Vector3 (1f, 0, 0));
 			}
 
 		} else {
