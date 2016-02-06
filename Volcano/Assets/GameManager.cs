@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour {
 	private UIManager uiManager;
 	private SaveDataManager saveDataManager;
 	private VolcanoEyeManager volcanoEyeManager;
+	private ParticleManager particleManager;
 
 	public static GameManager instance;
 
@@ -81,6 +82,7 @@ public class GameManager : MonoBehaviour {
 		uiManager=UIManager._instance;
 		saveDataManager=SaveDataManager.instance_;
 		volcanoEyeManager=VolcanoEyeManager._instance;
+		particleManager=ParticleManager._instance;
 
 		endText.SetActive(false);
 
@@ -350,6 +352,7 @@ public class GameManager : MonoBehaviour {
 				StartCoroutine ( EndCoroutine());
 			}
 		}
+		particleManager.playBurnPersonParticles();
 	}
 
     private IEnumerator ShakeCoroutine()
