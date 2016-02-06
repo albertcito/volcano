@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour {
     public GameObject gameContainer;
 	public GameObject personPrefab;
 	public GameObject volcan;
+	public GameObject personContainer;
 	public List<Person> people  =  new List<Person>();
 	private int remainingGoodAnswers;
 	public int lives = 3;
@@ -34,6 +35,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject endText;
 
 	private float time=30;
+	private float maxTime=30;
 	private int level;
 	public bool gameFinished;
     public bool isInTransition = true;
@@ -170,7 +172,7 @@ public class GameManager : MonoBehaviour {
 			time-=1;
 			uiManager.changeTime((int)time);
 			if(time<=0){
-				time=30;
+				time=maxTime;
 				checkLooseState();
 			}
 			yield return new WaitForSeconds(1f);
@@ -273,7 +275,7 @@ public class GameManager : MonoBehaviour {
 
 		person.Configure(hairs[sHair], pants[sPant], skins[sSkin] );
 
-        instanciaPerson.transform.parent = gameContainer.transform;
+		instanciaPerson.transform.parent = personContainer.gameObject.transform;;
 
         instanciaPerson.transform.position = pos;
 		return person;
@@ -356,13 +358,13 @@ public class GameManager : MonoBehaviour {
 			if (remainingGoodAnswers <= 0) {
 				destroyGame();
 				level++;
-				time+=3;
+				time+=5;
 				uiManager.setLevelText(level+1);
 				saveDataManager.setBestLevel(level);
 				loadGame();
 			}
 		} else {
-			time-=8;
+			time-=5;
 			checkLooseState();
 		}
 		particleManager.playBurnPersonParticles();

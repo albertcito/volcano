@@ -8,14 +8,24 @@ public class SoundManager : MonoBehaviour {
 	private AudioSource[] audio;
 
 	public static SoundManager _instance;
+	public static UIManager uiManager;
 
 	// Use this for initialization
 	void Awake () {
+		uiManager=UIManager._instance;
 		audio = this.gameObject.GetComponents<AudioSource>();
 		playMainTheme();
 		_instance=this;
+		AudioListener.volume = 0.3F;;
+	}
 
-
+	public void volumeOnOff(){
+		if(AudioListener.volume>0){
+			AudioListener.volume = 0.0F;
+		}else{
+			AudioListener.volume = 0.3F;
+		}
+		uiManager.soundONOFF();
 	}
 	
 	// Update is called once per frame
