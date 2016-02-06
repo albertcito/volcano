@@ -362,6 +362,7 @@ public class GameManager : MonoBehaviour {
 				loadGame();
 			}
 		} else {
+			time-=8;
 			checkLooseState();
 		}
 		particleManager.playBurnPersonParticles();
@@ -370,7 +371,6 @@ public class GameManager : MonoBehaviour {
 	private void checkLooseState(){
 		StartCoroutine( ShakeCoroutine() );
 		soundManager.playVolcanoAngry();
-		time-=8;
 		volcanoEyeManager.setAngryEyeFlagTrue();
 		currentLives--;
 		Vector3 v = volcan.transform.position;
