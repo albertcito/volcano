@@ -18,8 +18,7 @@ public class SoundManager : MonoBehaviour {
 		audio = this.gameObject.GetComponents<AudioSource>();
 		playMainTheme();
 		_instance=this;
-
-		if(PlayerPrefs.GetFloat("soundLevel")==null){
+		if(!PlayerPrefs.HasKey("soundLevel")){
 			AudioListener.volume = 1.0F;
 		}else{
 			AudioListener.volume =PlayerPrefs.GetFloat("soundLevel");

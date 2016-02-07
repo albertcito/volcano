@@ -8,7 +8,7 @@ public class TitleSceneController : MonoBehaviour {
 	void Awake () {
 
 
-		if(PlayerPrefs.GetFloat("soundLevel")==null){
+		if(!PlayerPrefs.HasKey("soundLevel")){
 			AudioListener.volume = 1F;
 		}else{
 			AudioListener.volume = PlayerPrefs.GetFloat("soundLevel");
