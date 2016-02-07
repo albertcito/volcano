@@ -173,10 +173,12 @@ public class GameManager : MonoBehaviour {
 
 	IEnumerator runTime(){
 		while(!gameFinished){
-			
-			uiManager.changeTime((int)time);
-			if(time<0){
+			if(time>0){
 				time-=1;
+			}
+			uiManager.changeTime((int)time);
+			if(time<=0){
+				
 				currentLives--;
 				checkLooseState();
 			}
