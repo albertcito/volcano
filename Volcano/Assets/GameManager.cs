@@ -210,6 +210,7 @@ public class GameManager : MonoBehaviour {
         float percentage = ((maxTime - currentTime) / maxTime);
         float diffPercentage = percentage - visualPercentage;
         visualPercentage += Mathf.Clamp(diffPercentage, -maxDiff, maxDiff);
+        visualPercentage = Mathf.Clamp01(visualPercentage);
         lavaSprite.transform.localPosition = new Vector3(0, savedLavaPosition.y + lavaHeight * visualPercentage);
         skySprite.color = Color.Lerp(savedSkyColor, finalSkyColor, visualPercentage);
     }
@@ -397,6 +398,10 @@ public class GameManager : MonoBehaviour {
 				saveDataManager.setBestLevel(level);
 				loadGame();
 			}
+            else
+            {
+                currentTime += 2f;
+            }
 		} else {
 			if(currentTime-5>=0){
 				currentTime-=5;
@@ -409,26 +414,31 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void checkLooseState(){
-		StartCoroutine( ShakeCoroutine() );
+		
 		soundManager.playVolcanoAngry();
 		volcanoEyeManager.setAngryEyeFlagTrue();
 
-		//subir lava
 		if (currentLives <= 0) {
-			particleManager.playLooseLavaParticle();
+            StartCoroutine(ShakeCoroutine(2f));
+            particleManager.playLooseLavaParticle();
 			volcanoEyeManager.setAngryEyeFlagTrueLoose();
 			gameFinished = true;
 			QuestionController.instance.killIcons ();
 			endText.SetActive(true);
 			StartCoroutine ( EndCoroutine());
 		}
+        else
+        {
+            StartCoroutine(ShakeCoroutine(0.2f));
+        }
 	}
 
-    private IEnumerator ShakeCoroutine()
+    private IEnumerator ShakeCoroutine( float duration )
     {
         Vector3 originalPos = gameContainer.transform.localPosition;
         float sign = 1f;
-        for (int i = 0; i < 5; i++) {
+        float startTime = Time.time;
+        while(startTime + duration > Time.time ) {
             gameContainer.transform.localPosition = originalPos + sign * 0.15f * Vector3.right;
             sign *= -1f;
             yield return 0;
