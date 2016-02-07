@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour {
 	private Vector3 savedLavaPosition;
     private Color savedSkyColor;
     public Color finalSkyColor;
+    private float visualPercentage;
 
     public bool gameFinished;
     public bool isInTransition = true;
@@ -106,7 +107,7 @@ public class GameManager : MonoBehaviour {
 
 		while( true ){
 			if (Input.GetMouseButtonDown (0)) {
-				StartCoroutine(UpdateTImeCoroutine());
+				StartCoroutine(UpdateTimeCoroutine());
 				break;
 			}
 
@@ -177,7 +178,7 @@ public class GameManager : MonoBehaviour {
 
     }
 
-	IEnumerator UpdateTImeCoroutine(){
+	IEnumerator UpdateTimeCoroutine(){
         int uiTime = -1;
 		while(!gameFinished){
 			if(currentTime>0){
@@ -189,10 +190,7 @@ public class GameManager : MonoBehaviour {
                 checkLooseState();
             }
 
-            float percentage = ((maxTime - currentTime) / maxTime);
-            lavaSprite.transform.localPosition = new Vector3(0, savedLavaPosition.y + lavaHeight * percentage);
-            skySprite.color = Color.Lerp(savedSkyColor, finalSkyColor, percentage);
-
+            UpdateLavaAndSky();
             //volcanParticle.Emit((int)(time));
 
             if ( Mathf.CeilToInt( currentTime ) != uiTime )
@@ -205,6 +203,16 @@ public class GameManager : MonoBehaviour {
 		}
 			
 	}
+
+    void UpdateLavaAndSky()
+    {
+        float maxDiff = Time.deltaTime * 0.5f;
+        float percentage = ((maxTime - currentTime) / maxTime);
+        float diffPercentage = percentage - visualPercentage;
+        visualPercentage += Mathf.Clamp(diffPercentage, -maxDiff, maxDiff);
+        lavaSprite.transform.localPosition = new Vector3(0, savedLavaPosition.y + lavaHeight * visualPercentage);
+        skySprite.color = Color.Lerp(savedSkyColor, finalSkyColor, visualPercentage);
+    }
 
     IEnumerator loadGameCoroutine(){
 
