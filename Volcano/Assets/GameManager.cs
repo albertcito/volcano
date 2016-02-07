@@ -361,7 +361,7 @@ public class GameManager : MonoBehaviour {
 			availableInvalidSets.Add (setInvalid);
 		}
 
-		int r = UnityEngine.Random.Range (0, availableInvalidSets.Count - 1);
+		int r = UnityEngine.Random.Range (0, availableInvalidSets.Count);
 		SetInvalid selectedSet = availableInvalidSets [r];
 
 		return apereceMono( selectedSet.selectedHairs, selectedSet.selectedPants, selectedSet.selectedSkins, pos );
