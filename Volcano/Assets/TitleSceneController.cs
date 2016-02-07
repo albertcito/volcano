@@ -5,9 +5,17 @@ public class TitleSceneController : MonoBehaviour {
 
 	
 	// Update is called once per frame
-	void Update () {
-		if (Input.GetMouseButtonDown (0)) {
-			UnityEngine.SceneManagement.SceneManager.LoadScene (1);
+	void Awake () {
+
+
+		if(PlayerPrefs.GetFloat("soundLevel")==null){
+			AudioListener.volume = 1F;
+		}else{
+			AudioListener.volume = PlayerPrefs.GetFloat("soundLevel");
 		}
+	}
+
+	public void playGame(){
+		UnityEngine.SceneManagement.SceneManager.LoadScene (1);
 	}
 }

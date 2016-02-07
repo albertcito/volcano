@@ -9,22 +9,31 @@ public class SoundManager : MonoBehaviour {
 
 	public static SoundManager _instance;
 	public static UIManager uiManager;
+	public static SaveDataManager saveDataManager;
 
 	// Use this for initialization
 	void Awake () {
 		uiManager=UIManager._instance;
+		saveDataManager=SaveDataManager._instance;
 		audio = this.gameObject.GetComponents<AudioSource>();
 		playMainTheme();
 		_instance=this;
-		AudioListener.volume = 0.3F;;
+
+		if(PlayerPrefs.GetFloat("soundLevel")==null){
+			AudioListener.volume = 1.0F;
+		}else{
+			AudioListener.volume =PlayerPrefs.GetFloat("soundLevel");
+			uiManager.soundONOFF();
+		}
 	}
 
 	public void volumeOnOff(){
 		if(AudioListener.volume>0){
 			AudioListener.volume = 0.0F;
 		}else{
-			AudioListener.volume = 0.3F;
+			AudioListener.volume = 1F;
 		}
+		saveDataManager.saveSoundPreset(AudioListener.volume);
 		uiManager.soundONOFF();
 	}
 	

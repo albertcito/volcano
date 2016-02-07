@@ -21,8 +21,8 @@ public class VolcanoEyeManager : MonoBehaviour {
 		_instance=this;
 	}
 
-	public void chageEyeState(){
-		changeStateFlag=true;
+	private void chageEyeState(bool state){
+		changeStateFlag=state;
 		normalEye.SetActive(normalEyeFlag);
 		happyEye.SetActive(happyEyeFlag);
 		angryEye.SetActive(angryEyeFlag);
@@ -44,21 +44,28 @@ public class VolcanoEyeManager : MonoBehaviour {
 		normalEyeFlag=true;
 		happyEyeFlag=false;
 		angryEyeFlag=false;
-		chageEyeState();
+		chageEyeState(true);
 	}
 
 	public void sethappyEyeFlagTrue(){
 		normalEyeFlag=false;
 		happyEyeFlag=true;
 		angryEyeFlag=false;
-		chageEyeState();
+		chageEyeState(true);
 	}
 
 	public void setAngryEyeFlagTrue(){
 		normalEyeFlag=false;
 		happyEyeFlag=false;
 		angryEyeFlag=true;
-		chageEyeState();
+		chageEyeState(true);
+	}
+
+	public void setAngryEyeFlagTrueLoose(){
+		normalEyeFlag=false;
+		happyEyeFlag=false;
+		angryEyeFlag=true;
+		chageEyeState(false);
 	}
 
 	public static VolcanoEyeManager getInstance(){

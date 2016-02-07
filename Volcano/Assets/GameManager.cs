@@ -16,10 +16,11 @@ public class GameManager : MonoBehaviour {
     public GameObject gameContainer;
 	public GameObject personPrefab;
 	public GameObject volcan;
+	public ParticleSystem volcanParticle;
 	public GameObject personContainer;
 	public List<Person> people  =  new List<Person>();
 	private int remainingGoodAnswers;
-	public int lives = 3;
+	private int lives = 1;
 	private int currentLives;
 	public GameObject spawnPointsParent;
     List<Transform> spawnPoints = new List<Transform>();
@@ -37,6 +38,7 @@ public class GameManager : MonoBehaviour {
 	private float time=30;
 	private float maxTime=30;
 	private int level;
+	private Vector3 saveVolcanPosition;
 	public bool gameFinished;
     public bool isInTransition = true;
 
@@ -85,9 +87,11 @@ public class GameManager : MonoBehaviour {
 	IEnumerator Start(){
 		soundManager=SoundManager._instance;
 		uiManager=UIManager._instance;
-		saveDataManager=SaveDataManager.instance_;
+		saveDataManager=SaveDataManager._instance;
 		volcanoEyeManager=VolcanoEyeManager._instance;
 		particleManager=ParticleManager._instance;
+
+		saveVolcanPosition=volcan.transform.localPosition;
 
 		endText.SetActive(false);
 
@@ -169,12 +173,15 @@ public class GameManager : MonoBehaviour {
 
 	IEnumerator runTime(){
 		while(!gameFinished){
-			time-=1;
+			
 			uiManager.changeTime((int)time);
-			if(time<=0){
-				time=maxTime;
+			if(time<0){
+				time-=1;
+				currentLives--;
 				checkLooseState();
 			}
+			volcan.transform.localPosition = new Vector3 (0, saveVolcanPosition.y+((maxTime-(time))/20));
+			//volcanParticle.Emit((int)(time));
 			yield return new WaitForSeconds(1f);
 		}
 			
@@ -364,7 +371,11 @@ public class GameManager : MonoBehaviour {
 				loadGame();
 			}
 		} else {
-			time-=5;
+			if(time-5>=0){
+				time-=5;
+			}else{
+				time=0;
+			}
 			checkLooseState();
 		}
 		particleManager.playBurnPersonParticles();
@@ -374,14 +385,11 @@ public class GameManager : MonoBehaviour {
 		StartCoroutine( ShakeCoroutine() );
 		soundManager.playVolcanoAngry();
 		volcanoEyeManager.setAngryEyeFlagTrue();
-		currentLives--;
-		Vector3 v = volcan.transform.position;
-
-		volcan.transform.localPosition += new Vector3 (0, lavaHeight / ((float)lives));
-
 
 		//subir lava
 		if (currentLives <= 0) {
+			particleManager.playLooseLavaParticle();
+			volcanoEyeManager.setAngryEyeFlagTrueLoose();
 			gameFinished = true;
 			QuestionController.instance.killIcons ();
 			endText.SetActive(true);

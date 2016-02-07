@@ -9,7 +9,7 @@ public class SetBestScore : MonoBehaviour {
 		if(PlayerPrefs.GetInt("bestLevel")==null){
 			this.GetComponent<Text>().text=""+1;
 		}else{
-			this.GetComponent<Text>().text=""+(PlayerPrefs.GetInt("bestLevel")+1);
+			this.GetComponent<Text>().text="Best level  "+(PlayerPrefs.GetInt("bestLevel")+1);
 		}
 	}
 	

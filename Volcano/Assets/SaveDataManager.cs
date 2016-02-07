@@ -3,12 +3,12 @@ using System.Collections;
 
 public class SaveDataManager : MonoBehaviour {
 
-	public static SaveDataManager instance_;
+	public static SaveDataManager _instance;
 	private int bestLevel;
 
 	// Use this for initialization
 	void Awake () {
-		instance_=this;
+		_instance=this;
 		if(PlayerPrefs.GetInt("bestLevel")==null){
 			bestLevel=1;
 			PlayerPrefs.SetInt("bestLevel",bestLevel);
@@ -20,6 +20,10 @@ public class SaveDataManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
+	}
+
+	public void saveSoundPreset(float soundLevel){
+		PlayerPrefs.SetFloat("soundLevel",soundLevel);
 	}
 
 	public void setBestLevel(int level){

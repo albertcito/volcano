@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 094a6d7d1bf5e405d96a22fb09a2e973
-timeCreated: 1454731126
+timeCreated: 1454803887
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -46,6 +46,7 @@ TextureImporter:
     21300078: ElPulentoAtlas_39
     21300080: ElPulentoAtlas_40
     21300082: ElPulentoAtlas_41
+    21300084: ElPulentoAtlas_42
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -51965,6 +51966,57 @@ TextureImporter:
         - {x: 230.5, y: 175.5}
         - {x: 231.5, y: 177.5}
         - {x: 231.5, y: 180.5}
+    - name: ElPulentoAtlas_42
+      rect:
+        serializedVersion: 2
+        x: 931
+        y: 338
+        width: 324
+        height: 285
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 58, y: 58, z: 60, w: 63}
+      outline:
+      - - {x: 151, y: 113.5}
+        - {x: 143, y: 124.5}
+        - {x: 130, y: 131.5}
+        - {x: 13, y: 129.5}
+        - {x: -10, y: 135.5}
+        - {x: -61, y: 134.5}
+        - {x: -65, y: 128.5}
+        - {x: -67, y: 131.5}
+        - {x: -70, y: 131.5}
+        - {x: -65, y: 131.5}
+        - {x: -63, y: 133.5}
+        - {x: -64, y: 137.5}
+        - {x: -94, y: 137.5}
+        - {x: -95, y: 136.5}
+        - {x: -102, y: 137.5}
+        - {x: -104, y: 137.5}
+        - {x: -108, y: 134.5}
+        - {x: -107, y: 132.5}
+        - {x: -108, y: 134.5}
+        - {x: -108, y: 137.5}
+        - {x: -124, y: 137.5}
+        - {x: -155, y: 124.5}
+        - {x: -156, y: 99.5}
+        - {x: -156, y: -99.5}
+        - {x: -149, y: -125.5}
+        - {x: -136, y: -134.5}
+        - {x: 136, y: -134.5}
+        - {x: 148, y: -123.5}
+        - {x: 151, y: -115.5}
+      - - {x: -146, y: 129.5}
+        - {x: -143, y: 130.5}
+        - {x: -143, y: 133.5}
+        - {x: -146, y: 134.5}
+        - {x: -148, y: 132.5}
+      - - {x: -130, y: 135.5}
+        - {x: -129, y: 132.5}
+        - {x: -125, y: 132.5}
+        - {x: -123, y: 134.5}
+        - {x: -124, y: 137.5}
+        - {x: -128, y: 137.5}
     outline: []
   spritePackingTag: 
   userData: 

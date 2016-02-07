@@ -7,6 +7,7 @@ public class ParticleManager : MonoBehaviour {
 
 	public ParticleSystem personDeathParticleLava;
 	public ParticleSystem personDeathParticleSmoke;
+	public ParticleSystem looseLavaParticle;
 
 	// Use this for initialization
 	void Awake () {
@@ -21,5 +22,10 @@ public class ParticleManager : MonoBehaviour {
 	public void playBurnPersonParticles(){
 		personDeathParticleLava.Play();
 		personDeathParticleSmoke.Play();
+	}
+
+	public void playLooseLavaParticle(){
+		looseLavaParticle.loop=true;
+		looseLavaParticle.Play();
 	}
 }
