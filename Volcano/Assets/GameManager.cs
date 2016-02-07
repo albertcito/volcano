@@ -15,8 +15,9 @@ public class GameManager : MonoBehaviour {
 
     public GameObject gameContainer;
 	public GameObject personPrefab;
-	public GameObject volcan;
-	public ParticleSystem volcanParticle;
+	public SpriteRenderer lavaSprite;
+    public SpriteRenderer skySprite;
+    public ParticleSystem volcanParticle;
 	public GameObject personContainer;
 	public List<Person> people  =  new List<Person>();
 	private int remainingGoodAnswers;
@@ -30,16 +31,19 @@ public class GameManager : MonoBehaviour {
 
     public GameObject personOriginPointsParent;
     List<Transform> originPoints = new List<Transform>();
-    float lavaHeight = 1f;
+    float lavaHeight = 1.52f;
 
 	public GameObject beginText;
 	public GameObject endText;
 
-	private float time=30;
 	private float maxTime=30;
-	private int level;
-	private Vector3 saveVolcanPosition;
-	public bool gameFinished;
+    private float currentTime;
+    private int level;
+	private Vector3 savedLavaPosition;
+    private Color savedSkyColor;
+    public Color finalSkyColor;
+
+    public bool gameFinished;
     public bool isInTransition = true;
 
     //numero de personas que aparecen 
@@ -85,13 +89,15 @@ public class GameManager : MonoBehaviour {
         } }
 
 	IEnumerator Start(){
-		soundManager=SoundManager._instance;
+        currentTime = maxTime;
+        soundManager =SoundManager._instance;
 		uiManager=UIManager._instance;
 		saveDataManager=SaveDataManager._instance;
 		volcanoEyeManager=VolcanoEyeManager._instance;
 		particleManager=ParticleManager._instance;
 
-		saveVolcanPosition=volcan.transform.localPosition;
+		savedLavaPosition=lavaSprite.transform.localPosition;
+        savedSkyColor = skySprite.color;
 
 		endText.SetActive(false);
 
@@ -100,7 +106,7 @@ public class GameManager : MonoBehaviour {
 
 		while( true ){
 			if (Input.GetMouseButtonDown (0)) {
-				StartCoroutine(runTime());
+				StartCoroutine(UpdateTImeCoroutine());
 				break;
 			}
 
@@ -171,20 +177,31 @@ public class GameManager : MonoBehaviour {
 
     }
 
-	IEnumerator runTime(){
+	IEnumerator UpdateTImeCoroutine(){
+        int uiTime = -1;
 		while(!gameFinished){
-			if(time>0){
-				time-=1;
+			if(currentTime>0){
+				currentTime-=Time.deltaTime;
 			}
-			uiManager.changeTime((int)time);
-			if(time<=0){
-				
-				currentLives--;
-				checkLooseState();
-			}
-			volcan.transform.localPosition = new Vector3 (0, saveVolcanPosition.y+((maxTime-(time))/20));
-			//volcanParticle.Emit((int)(time));
-			yield return new WaitForSeconds(1f);
+            else
+            {
+                currentLives--;
+                checkLooseState();
+            }
+
+            float percentage = ((maxTime - currentTime) / maxTime);
+            lavaSprite.transform.localPosition = new Vector3(0, savedLavaPosition.y + lavaHeight * percentage);
+            skySprite.color = Color.Lerp(savedSkyColor, finalSkyColor, percentage);
+
+            //volcanParticle.Emit((int)(time));
+
+            if ( Mathf.CeilToInt( currentTime ) != uiTime )
+            {
+                uiTime = Mathf.CeilToInt(currentTime);
+                uiManager.changeTime(uiTime);
+            }
+
+			yield return null;
 		}
 			
 	}
@@ -367,16 +384,16 @@ public class GameManager : MonoBehaviour {
 			if (remainingGoodAnswers <= 0) {
 				destroyGame();
 				level++;
-				time+=5;
+				currentTime+=5;
 				uiManager.setLevelText(level+1);
 				saveDataManager.setBestLevel(level);
 				loadGame();
 			}
 		} else {
-			if(time-5>=0){
-				time-=5;
+			if(currentTime-5>=0){
+				currentTime-=5;
 			}else{
-				time=0;
+				currentTime=0;
 			}
 			checkLooseState();
 		}
