@@ -273,7 +273,7 @@ public class QuestionController : MonoBehaviour {
 
 		List<bool> isPositiveList = new List<bool> ();
 		for(int i = 0; i < numCondition; i++ ) {
-			isPositiveList.Add( i<= numNegations ? false : true );
+			isPositiveList.Add( i< numNegations ? true : false );
 		}
 
 		List<CreateConditionFunc> createConditions = new List<CreateConditionFunc> ();
