@@ -9,12 +9,7 @@ public class SaveDataManager : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
 		_instance=this;
-		if(PlayerPrefs.GetInt("bestLevel")==null){
-			bestLevel=1;
-			PlayerPrefs.SetInt("bestLevel",bestLevel);
-		}else{
-			bestLevel=PlayerPrefs.GetInt("bestLevel");
-		}
+
 	}
 	
 	// Update is called once per frame
@@ -26,10 +21,33 @@ public class SaveDataManager : MonoBehaviour {
 		PlayerPrefs.SetFloat("soundLevel",soundLevel);
 	}
 
-	public void setBestLevel(int level){
+	public void setBestLevel(int level,ChallengeType challengeType){
+		if(challengeType==ChallengeType.TIME){
+			if(PlayerPrefs.GetInt("bestLevelTime")==null){
+				bestLevel=PlayerPrefs.GetInt("bestLevelTime");
+			}else{
+				bestLevel=1;
+			}
+		}
+
+		if(challengeType==ChallengeType.ACURACY){
+			if(PlayerPrefs.GetInt("bestLevelAcuracy")==null){
+				bestLevel=PlayerPrefs.GetInt("bestLevelAcuracy");
+			}else{
+				bestLevel=1;
+			}
+		}
+			
 		if(level>bestLevel){
 			bestLevel=level;
-			PlayerPrefs.SetInt("bestLevel",bestLevel);
+
+			if(challengeType==ChallengeType.TIME){
+				PlayerPrefs.SetInt("bestLevelTime",bestLevel);
+			}
+
+			if(challengeType==ChallengeType.ACURACY){
+				PlayerPrefs.SetInt("bestLevelAcuracy",bestLevel);
+			}
 		}
 	}
 }

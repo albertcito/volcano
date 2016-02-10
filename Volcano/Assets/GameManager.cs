@@ -3,6 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
+public enum ChallengeType{
+	TIME=1,
+	ACURACY=2
+}
+
 public class GameManager : MonoBehaviour {
 
 	private SoundManager soundManager;
@@ -59,8 +64,8 @@ public class GameManager : MonoBehaviour {
 	int[] maxCondition = { 1,1,2,2,2,3,3,1,1,2,2,2,3,3,3,3,3,3,3,3,3,3,2,2,3,2,3,3,3,3,3,3,3,2,2,2,3,3,3,3};
 	float[] minValidPercentage={50,40,30,20,20,35,20,50,50,40,35,20,15,15,15,30,20,30,35,30,30,30,30,30,25,25,20,15,10,10,10,10,20,25,20,20,20,10,10,10};
 	float[] maxValidPercentage = { 60,50,40,40,60,60,40,50,50,60,60,60,60,55,50,45,40,50,60,55,50,45,45,40,35,35,35,35,40,40,35,35,35,35,30,25,25,35,40,25};
-	float[] minNegation={0f,0f,0f,0f,0f,0f,33.3f,33.3f,33.3f,0f,0f,0f,33.3f,0f,33.3f,0f,0f,33.3f,66.7f,66.7f,33.3f,0f,33.3f,33.3f,0f,33.3f,33.3f,0f,33.3f,33.3f,0f,33.3f,0f,33.3f,0f,33.3f,0f,66.7f,0f,0f};
-	float[] maxNegation = { 0f,0f,0f,0f,0f,0f,33.3f,33.3f,33.3f,33.3f,33.3f,66.7f,66.7f,66.7f,66.7f,33.3f,66.7f,100f,100f,100f,66.7f,100f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,100f,100f,100f};
+	float[] minNegation={0f,0f,0f,0f,0f,0f,0f,33.3f,33.3f,0f,0f,0f,33.3f,0f,33.3f,0f,0f,33.3f,66.7f,66.7f,33.3f,0f,33.3f,33.3f,0f,33.3f,33.3f,0f,33.3f,33.3f,0f,33.3f,0f,33.3f,0f,33.3f,0f,66.7f,0f,0f};
+	float[] maxNegation = { 0f,0f,0f,0f,0f,0f,0f,33.3f,33.3f,33.3f,33.3f,66.7f,66.7f,66.7f,66.7f,33.3f,66.7f,100f,100f,100f,66.7f,100f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,66.7f,100f,100f,100f};
 
 	//La idea de esto es dar un porcentage de monos con caracteristicas similares a la receta esto define 
 	//como un numeor entre los dos valores minimos y maximos
@@ -75,7 +80,7 @@ public class GameManager : MonoBehaviour {
 	float[] minUnvalidMisleadingPercentage= { 20, 25, 20, 20, 20, 25, 40, 30, 25, 45, 50, 55, 60, 60, 50, 60, 50, 60, 60};
 	float[] maxUnvalidMisleadingPercentage= { 30, 35, 40, 50, 50, 50, 60, 40, 40, 50, 60, 60, 60, 65, 65, 65, 70, 70, 70 };
 
-
+	private ChallengeType challengeType;
 
     public bool IsInputBlocked {
         get {
@@ -90,25 +95,39 @@ public class GameManager : MonoBehaviour {
             return false;
         } }
 
+	void Awake(){
+		
+		uiManager=UIManager._instance;
+
+		challengeType=(ChallengeType)Enum.Parse(typeof(ChallengeType),PlayerPrefs.GetString("challengeType"));
+		print("Challenge type is : " + challengeType);
+
+		if(challengeType==ChallengeType.ACURACY){
+			uiManager.hideTime();
+		}
+
+	}
+
 	IEnumerator Start(){
         currentTime = maxTime;
-        soundManager =SoundManager._instance;
-		uiManager=UIManager._instance;
-		saveDataManager=SaveDataManager._instance;
+        
+		soundManager =SoundManager._instance;
 		volcanoEyeManager=VolcanoEyeManager._instance;
 		particleManager=ParticleManager._instance;
+		saveDataManager=SaveDataManager._instance;
 
 		savedLavaPosition=lavaSprite.transform.localPosition;
         savedSkyColor = skySprite.color;
 
 		endText.SetActive(false);
 
-
 		yield return new WaitForSeconds (0.5f);
 
 		while( true ){
 			if (Input.GetMouseButtonDown (0)) {
-				StartCoroutine(UpdateTimeCoroutine());
+				if(challengeType==ChallengeType.TIME){
+					StartCoroutine(UpdateTimeCoroutine());
+				}
 				break;
 			}
 
@@ -391,12 +410,14 @@ public class GameManager : MonoBehaviour {
 		if (isGoodAnswer) {
 			soundManager.playVolcanoHappy();
 			volcanoEyeManager.sethappyEyeFlagTrue();
-			if (remainingGoodAnswers <= 0) {
+			if (remainingGoodAnswers <= 0 ) {
 				destroyGame();
 				level++;
-				currentTime+=5;
+				if(challengeType==ChallengeType.TIME){
+					currentTime+=3;
+				}
 				uiManager.setLevelText(level+1);
-				saveDataManager.setBestLevel(level);
+				saveDataManager.setBestLevel(level,challengeType);
 				loadGame();
 			}
             else
@@ -404,10 +425,12 @@ public class GameManager : MonoBehaviour {
                 currentTime += 2f;
             }
 		} else {
-			if(currentTime-5>=0){
-				currentTime-=5;
-			}else{
-				currentTime=0;
+			if(challengeType==ChallengeType.TIME){
+				if(currentTime-5>=0){
+					currentTime-=5;
+				}else{
+					currentTime=0;
+				}
 			}
 			checkLooseState();
 		}
@@ -419,7 +442,7 @@ public class GameManager : MonoBehaviour {
 		soundManager.playVolcanoAngry();
 		volcanoEyeManager.setAngryEyeFlagTrue();
 
-		if (currentLives <= 0) {
+		if (currentLives <= 0 || challengeType==ChallengeType.ACURACY) {
             StartCoroutine(ShakeCoroutine(2f));
             particleManager.playLooseLavaParticle();
 			volcanoEyeManager.setAngryEyeFlagTrueLoose();

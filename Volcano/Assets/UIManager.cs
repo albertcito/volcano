@@ -67,4 +67,8 @@ public class UIManager : MonoBehaviour {
 		Time.timeScale = 1.0f;
 		UnityEngine.SceneManagement.SceneManager.LoadScene (0);
 	}
+
+	public void hideTime(){
+		timeText.SetActive(false);
+	}
 }
