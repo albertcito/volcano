@@ -29,9 +29,8 @@ public abstract class Condition{
 
 		GameObject icon = CreateIcon ();
 		GameObject optionGameObject = getTrueOrFalse ();
-		optionGameObject.transform.parent = icon.transform;
-
-		return icon;
+		icon.transform.parent = optionGameObject.transform;
+		return optionGameObject;
 
 	}
 
@@ -329,6 +328,7 @@ public class QuestionController : MonoBehaviour {
 				GameObject icon = cond.CreateDisplay ();
 				icons.Add (icon);
 				icon.transform.parent = this.transform;
+				icon.transform.localScale = Vector3.one;
 				icon.transform.localPosition = new Vector3 (0f, 0, 0);
 			}
 			
@@ -338,6 +338,7 @@ public class QuestionController : MonoBehaviour {
 				GameObject icon = cond.CreateDisplay ();
 				icons.Add (icon);
 				icon.transform.parent = this.transform;
+				icon.transform.localScale = Vector3.one;
 				icon.transform.localPosition = (i- 0.5f) * 2f * (new Vector3 (1f, 0, 0));
 			}
 
@@ -347,6 +348,7 @@ public class QuestionController : MonoBehaviour {
 				GameObject icon = cond.CreateDisplay ();
 				icons.Add (icon);
 				icon.transform.parent = this.transform;
+				icon.transform.localScale = Vector3.one;
 				icon.transform.localPosition = (i- 1f) * 2f * (new Vector3 (1f, 0, 0));
 			}
 
@@ -356,6 +358,7 @@ public class QuestionController : MonoBehaviour {
 				GameObject icon = cond.CreateDisplay ();
 				icons.Add (icon);
 				icon.transform.parent = this.transform;
+				icon.transform.localScale = Vector3.one;
 				icon.transform.localPosition = (i - (conditions.Count - 1) / 2) * 3f * (new Vector3 (1f, 0, 0));
 			}
 		}
