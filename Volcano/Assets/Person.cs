@@ -46,17 +46,74 @@ public class Person : MonoBehaviour {
 
 	}
 
-	void OnMouseDown() {
-
+	void OnMouseDrag(){
 		if(GameManager.instance.IsInputBlocked)
-        {
+		{
 			return;
 		}
-        if( picked )
-        {
-            return;
-        }
+		if( picked )
+		{
+			return;
+		}
+		if( startMouseDown < 0 ) {
+			return;
+		}
 
+		if( Time.time - startMouseDown > 0.3f ) {
+			return;
+		}
+		Vector2 mousePos = new Vector2( Input.mousePosition.x / (float) Screen.width, Input.mousePosition.y / (float) Screen.height );
+		Vector2 diff = mousePos - startMousePos;
+
+		if( diff.sqrMagnitude < 0.08f * 0.08f ) {
+			return;
+		}
+		float dotProd = Vector2.Dot( diff.normalized, Vector2.up );
+		if( dotProd > 0.6f ) {
+			GoToVolcan();
+		}
+		else if( dotProd < -0.6f ) {
+			GoAway();
+		}
+		startMouseDown = -1f;
+	}
+
+	private Vector2 startMousePos = -Vector2.one;
+	private float startMouseDown = -1f;
+	void OnMouseDown() {
+		if(GameManager.instance.IsInputBlocked)
+		{
+			return;
+		}
+		if( picked )
+		{
+			return;
+		}
+		startMousePos = new Vector2( Input.mousePosition.x / (float) Screen.width, Input.mousePosition.y / (float) Screen.height );
+		startMouseDown = Time.time;
+	}
+
+	void OnMouseUp() {
+		startMouseDown = -1f;
+	}
+
+	void GoAway() {
+		picked = true;
+		GameManager.instance.StartCoroutine( WalkAwayCoroutine( () => {
+			GameManager.instance.CheckEndQuestion();
+		}) );
+		if (QuestionController.instance.IsValid (this)) {
+			sounManager.playPeopleGrount();
+			GameManager.instance.BadAnswer();
+			GameManager.instance.CheckIfLastPerson();    //to block input
+
+		} else {
+			sounManager.playHappyPeople();
+		}
+
+	}
+
+	void GoToVolcan() {
 		picked = true;
         GameManager.instance.people.Remove(this);
 		if (QuestionController.instance.IsValid (this)) {
@@ -70,6 +127,15 @@ public class Person : MonoBehaviour {
 			StartCoroutine( DeathCoroutine(false) );
 		}
 
+	}
+
+	public IEnumerator WalkAwayCoroutine( System.Action cb = null )
+	{
+		GameManager.instance.people.Remove(this);
+		yield return StartCoroutine( WalkToPositionCoroutine( GameManager.instance.GetClosestOriginPoint( transform.position ), true ) );
+		if( cb != null ) {
+			cb();
+		}
 	}
 
     public IEnumerator WalkToPositionCoroutine( Vector3 destination, bool dieAfter = false )

@@ -398,8 +398,7 @@ public class GameManager : MonoBehaviour {
                 Person p = people[i];
                 if (!p.picked)
                 {
-                    StartCoroutine(p.WalkToPositionCoroutine(GetClosestOriginPoint( p.transform.position ), true) );
-                    people.Remove(p);
+					StartCoroutine(p.WalkAwayCoroutine() );
                 }
             }
         }
@@ -411,30 +410,38 @@ public class GameManager : MonoBehaviour {
 			soundManager.playVolcanoHappy();
 			volcanoEyeManager.sethappyEyeFlagTrue();
 			if (remainingGoodAnswers <= 0 ) {
-				destroyGame();
-				level++;
-				if(challengeType==ChallengeType.TIME){
-					currentTime+=3;
-				}
-				uiManager.setLevelText(level+1);
-				saveDataManager.setBestLevel(level,challengeType);
-				loadGame();
+				currentTime+=3;
 			}
-            else
-            {
+            else {
                 currentTime += 2f;
             }
-		} else {
-			if(challengeType==ChallengeType.TIME){
-				if(currentTime-5>=0){
-					currentTime-=5;
-				}else{
-					currentTime=0;
-				}
-			}
-			checkLooseState();
+			CheckEndQuestion();
+		}
+		else {
+			BadAnswer();
 		}
 		particleManager.playBurnPersonParticles();
+	}
+
+	public void CheckEndQuestion(){
+		if (remainingGoodAnswers <= 0 ) {
+			destroyGame();
+			level++;
+			uiManager.setLevelText(level+1);
+			saveDataManager.setBestLevel(level,challengeType);
+			loadGame();
+		}
+	}
+
+	public void BadAnswer(){
+		if(challengeType==ChallengeType.TIME){
+			if(currentTime-5>=0){
+				currentTime-=5;
+			}else{
+				currentTime=0;
+			}
+		}
+		checkLooseState();
 	}
 
 	private void checkLooseState(){
@@ -494,7 +501,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-    Vector3 GetClosestOriginPoint( Vector3 pos )
+    public Vector3 GetClosestOriginPoint( Vector3 pos )
     {
         Vector3 retVal = originPoints[0].position;
         foreach ( Transform o in originPoints )
