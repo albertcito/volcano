@@ -16,11 +16,13 @@ public class TitleSceneController : MonoBehaviour {
 	}
 
 	public void playTimeChallenge(){
+		print("Play : Time Challenge");
 		PlayerPrefs.SetString("challengeType","TIME");
 		UnityEngine.SceneManagement.SceneManager.LoadScene (1);
 	}
 
 	public void playAcuracyChallenge(){
+		print("Play : Acuracy Challenge");
 		PlayerPrefs.SetString("challengeType","ACURACY");
 		UnityEngine.SceneManagement.SceneManager.LoadScene (1);
 	}
